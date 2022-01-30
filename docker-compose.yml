@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  #  web:
+  #    container_name: gamestat-web-dev
+  #    build:
+  #      context: ./frontend
+  #      dockerfile: Dockerfile
+  #    ports:
+  #      - 3050:3050
+  #    environment:
+  #      - HOST=0.0.0.0
+  #      - PORT=3050
+  #    command: npm start
+  api:
+    container_name: gamestat-api-dev
+    # API_DB_PORT should match (right side) port in DB image
+    environment:
+      - API_DB_HOST=db
+      - API_DB_PORT=5433
+      - API_DB_NAME=exercise_db
+      - API_DB_USER=app_user
+      - API_DB_PASS=password
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8050
+    volumes:
+      - ./backend:/home/app/app-back
+    ports:
+      - 8050:8050
+    depends_on:
+      - gamestat-db
+
+  gamestat-db:
+    container_name: gamestat-db-dev
+    image: postgres:alpine3.14
+    environment:
+      - POSTGRES_USER=app_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=gamestat_db
+    ports:
+      - 35729:5433
+    volumes:
+      - gamestat_db:/var/lib/postgresql/data
+
+  gamestat-psqldb-adminer:
+    image: adminer:latest
+    # container output:psqldb output (default 8080)
+    ports:
+      - 9091:8080
+volumes:
+  gamestat_db:

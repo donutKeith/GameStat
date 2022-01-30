@@ -1,0 +1,7 @@
+{
+	'extensions': [
+		'ms-python.vscode-pylance',
+		'mhutchie.git-graph',
+		'donjayamanne.githistory'
+	]
+}
